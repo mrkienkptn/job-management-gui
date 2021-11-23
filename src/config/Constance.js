@@ -1,0 +1,1 @@
+export const SERVER = "https://6177bb9b9c328300175f5afc.mockapi.io"
