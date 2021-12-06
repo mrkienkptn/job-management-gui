@@ -50,7 +50,7 @@ const Kanban = (props) => {
     console.log(n)
   }
   return (
-    <Box>
+    <Box style={{height:'100%'}}>
       <Board
         allowAddColumn
         allowRemoveLane

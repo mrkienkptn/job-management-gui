@@ -1,3 +1,62 @@
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(148, 148, 148); 
+  border-radius: 10px;
+
+}
 .MuiCard-root{
   width: 250px;
+}
+.MuiBox-root{
+
+}
+
+[contenteditable] {
+  outline: 0.5px solid transparent;
+  padding: 5px;
+  border-radius: 2px;
+  background-color: #eaecf0;
+}
+
+.react-kanban-column {
+  overflow-y: scroll;
+  max-height: calc(100vh - 184px);
+  background-color: #dbdbdb;
+}
+.card-modal-body {
+  display: flex;
+  flex-direction: row;
+
+}
+.card-modal-component {
+  width: 200px;
+}
+.card-modal-content{
+  flex-grow: 1;
+  margin-top: 20px;
+  padding-right: 20px;
+}
+.card-modal-content .due-date{
+  background-color: #eaecf0;
+  
+}
+.card-modal-component .btn{
+  width: 100%;
+  margin-top: 15px;
+  background-color: #eaecf0;
+  justify-content: left;
+  padding-left: 20px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+.check-list {
+  margin-top: 10px;
+}
+.check-list > .btn{
+  text-transform: none;
+  background-color: #eaecf0;
+  margin-left: 28px;
 }

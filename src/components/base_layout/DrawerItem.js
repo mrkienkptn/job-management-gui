@@ -30,7 +30,9 @@ const DrawerItem = (props) => {
 
   return (
     <Link to={link} style={{ textDecoration: "none" }}>
-      <ListItemButton onClick={onSelect} selected={selected}>
+      <ListItemButton
+        style={{ borderRadius:5, marginBottom: 4}}
+      onClick={onSelect} selected={selected}>
         {icon !== "none" &&
           <ListItemIcon>
             {icon}

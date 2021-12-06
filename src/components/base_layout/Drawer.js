@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { styled, useTheme } from '@mui/material/styles'
 import { Switch, Route } from 'react-router-dom'
+import {Button} from '@mui/material'
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar from '@mui/material/AppBar'
@@ -18,19 +19,17 @@ import AddIcon from '@mui/icons-material/Add'
 import HomeIcon from '@mui/icons-material/Home'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import Typography from '@mui/material/Typography'
-
+import { Avatar } from '@mui/material';
 import { useSelector } from 'react-redux'
-
-import InitHeader from '../component_init/InitHeader'
-
 import PublicRoute from '../auth/PublicRoute';
 import CreateGroup from '../../pages/create_group'
 import CreateJob from '../../pages/create_job'
 import DrawerItem from './DrawerItem'
-
+import { stringAvatar } from '../../utils/Avatar.util'
 import { GetAllJobs } from '../../apis/job'
-
+import './index.css'
 const drawerWidth = 250;
+
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -39,6 +38,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  backgroundColor: '#e5e5e5',
 });
 
 const closedMixin = (theme) => ({
@@ -47,9 +47,10 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
+  backgroundColor: '#e5e5e5',
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(9)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
 
@@ -66,6 +67,8 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  boxShadow: 'none',
+  border: 0,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -94,13 +97,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
       ...closedMixin(theme),
       '& .MuiDrawer-paper': closedMixin(theme),
     }),
+
   }),
+
 );
 
 const MiniDrawer = ({ children, ...props }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const name = JSON.parse(localStorage.getItem('user')).name || null
   const drawerItems = useSelector((state => state.drawerReducer.item))
   const [jobs, setJobs] = React.useState([])
   const handleMenu = (event) => {
@@ -133,7 +139,7 @@ const MiniDrawer = ({ children, ...props }) => {
     <Box sx={{ display: 'flex', flexGrow: 1 }} color="secondary.dark">
       <CssBaseline />
 
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} style={{backgroundColor: 'white', color:'black', borderBottom:'0.5px solid grey'}}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -176,18 +182,15 @@ const MiniDrawer = ({ children, ...props }) => {
               </Typography>
             </Route>
           </Switch>
-          <div style={{flexGrow: 1, flexDirection:'row', textAlign:'end'}}>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
-            
-          >
-            <AccountCircle />
-          </IconButton>
+          <div style={{ flexGrow: 1, flexDirection: 'row', textAlign: 'end' }}>
+            <Button
+              size="small"
+              onClick={handleMenu}
+              color="inherit"
+              endIcon={<Avatar {...stringAvatar(name)}/>}
+            >
+              {name}
+            </Button>
           </div>
           <Menu
             id="menu-appbar"
@@ -248,12 +251,16 @@ const MiniDrawer = ({ children, ...props }) => {
           />
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* <Switch> */}
+        {/* {jobs.data && jobs.data.length > 0 &&
+            jobs.data.map((i, indx) => (
+              <PublicRoute path={`/${i.id}`} component={CreateJob} key={indx} />
+            ))
+          } */}
         <PublicRoute path="/create-group" component={CreateGroup} />
         <PublicRoute path="/create-job" component={CreateJob} />
-        {/* </Switch> */}
+        
       </Box>
     </Box>
   );

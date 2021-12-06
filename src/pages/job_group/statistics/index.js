@@ -1,9 +1,13 @@
 import * as React from 'react'
-import type { ChartProps } from 'react-chartjs-2';
+import Box from '@mui/material/Box'
+import DoughnutChart from './Doughnut'
+import './index.css'
 const Statistics = props => {
 
-  return(
-    <div></div>
+  return (
+    <Box style={{width: '100%', padding: 40 }}>
+      <DoughnutChart />
+    </Box>
   )
 
 }

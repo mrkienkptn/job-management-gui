@@ -1,12 +1,29 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
+import {
+  Box,
+  Modal,
+  Button,
+  Typography,
+  CardActions,
+  CardContent,
+  Card,
+  TextField
+} from '@mui/material'
+import {
+  PersonOutline,
+  PlaylistAddCheck,
+  AccessTime,
+  Person,
+  Label,
+  Description
+} from '@mui/icons-material'
+import {
+  DatePicker,
+  LocalizationProvider
+} from '@mui/lab'
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import CheckList from './CheckList'
+import './index.css'
 
 const style = {
   position: 'absolute',
@@ -14,13 +31,14 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 900,
-  height: 600
-
+  height: 700
 };
 
 const CardModal = (props, ref) => {
 
   const [open, setOpen] = React.useState(false);
+  const [dueDate, setDueDate] = React.useState(null)
+  const [openDatePicker, setOpenDatePikcer] = React.useState(false)
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -36,27 +54,66 @@ const CardModal = (props, ref) => {
         onClose={handleClose}
         aria-labelledby="keep-mounted-modal-title"
         aria-describedby="keep-mounted-modal-description"
+        style={{ overflowY: 'scroll', border: 'none' }}
       >
         <Box sx={style}>
-          <Card style={{width:'100%', height:'100%'}}>
-            <CardMedia
-              component="img"
-              height="140"
-              image="https://mui.com/static/images/cards/contemplative-reptile.jpg"
-              alt="green iguana"
-            />
+          <Card style={{ width: '100%', height: '100%' }}>
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Lizard
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Lizards are a widespread group of squamate reptiles, with over 6,000
-                species, ranging across all continents except Antarctica
-              </Typography>
+              <div style={{}}>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  suppressContentEditableWarning
+                  contentEditable={true}>
+                  Title
+                </Typography>
+                <div style={{ margin: '15px 0px' }}>
+                  <span>Project: </span>
+                  <span style={{ fontWeight: 'bold' }}>Project Name</span>
+                </div>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  suppressContentEditableWarning
+                  contentEditable={true}>
+                  Description ...
+                </Typography>
+              </div>
+
+              <div className="card-modal-body">
+                <div className="card-modal-content">
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Due date"
+                      value={dueDate}
+                      onChange={(newValue) => {
+                        setDueDate(newValue);
+                      }}
+                      renderInput={(params) => {
+                        return <TextField size="small" className="due-date"  {...params} />
+                      }}
+                      open={openDatePicker}
+                      onClose={() => setOpenDatePikcer(false)}
+                      disableOpenPicker
+                    />
+                  </LocalizationProvider>
+                  <CheckList/>
+                </div>
+                <div className="card-modal-component">
+                  <Button startIcon={<PersonOutline />} className="btn">Assignee</Button>
+                  <Button startIcon={<Person />} className="btn">Follower</Button>
+                  <Button onClick={() => setOpenDatePikcer(true)} startIcon={<AccessTime />} className="btn">Due date</Button>
+                  <Button startIcon={<Label />} className="btn">Labels</Button>
+                  <Button startIcon={<PlaylistAddCheck />} className="btn">Check List</Button>
+
+                </div>
+              </div>
             </CardContent>
-            <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small">Learn More</Button>
+
+            <CardActions style={{ position: 'absolute', bottom: 5, right: 5 }}>
+              <Button variant="contained" size="small">Save</Button>
+              <Button onClick={handleClose} variant="outlined" size="small">Cancel</Button>
             </CardActions>
           </Card>
         </Box>

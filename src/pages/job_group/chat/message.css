@@ -1,0 +1,27 @@
+.msg-box{
+  width: 100%;
+  margin-bottom: 10px;
+}
+.msg-stack{
+  width: 100%;
+}
+.send-msg{
+  padding: 7px 12px;
+  background-color: darkcyan;
+  border-radius: 20px;
+  color: white;
+  font-size: small;
+}
+.other-msg{
+  padding: 10px 15px;
+  background-color: white;
+  border-radius: 20px;
+  color: black;
+  font-size: small;
+}
+.date-note{
+  font-size: small;
+  color: grey;
+  height: 100%;
+  align-self: flex-start;
+}

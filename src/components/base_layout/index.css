@@ -1,0 +1,16 @@
+.MuiDrawer-paper{
+  border: none !important
+}
+.MuiAppBar-root{
+
+}
+a{
+  text-decoration: none;
+  color: black;
+}
+.main{
+  background-color: #f2f3f4;
+  padding: 0px !important;
+  /* background-image: url("../../assets/pictures/back1.jpg"); */
+  background-size: cover;
+}
