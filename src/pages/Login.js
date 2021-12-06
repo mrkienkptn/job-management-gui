@@ -12,9 +12,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert'
+import { connect, useDispatch } from 'react-redux'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useHistory } from 'react-router-dom'
 import { login } from '../apis/user'
+import { setData } from '../redux/reducers/UserdataReducer'
 
 function Copyright(props) {
   return (
@@ -31,7 +33,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+const SignIn = (props) => {
   const [fail, setFail] = React.useState(false)
   const history = useHistory()
   const handleSubmit = async (event) => {
@@ -46,7 +48,7 @@ export default function SignIn() {
       setFail(false)
       const { user, accessToken } = res.data.data
       localStorage.setItem('token', accessToken)
-      localStorage.setItem('user', JSON.stringify(user))
+      props.setUserData(user)
       history.push('/')
     }
     else  {
@@ -113,7 +115,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
@@ -125,3 +127,15 @@ export default function SignIn() {
     </ThemeProvider>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+      userData: state.UserDataReducer.userData
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+      setUserData: (data)=> dispatch(setData(data))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

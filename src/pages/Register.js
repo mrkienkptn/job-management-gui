@@ -11,8 +11,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { connect, useDispatch } from 'react-redux'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { signup } from '../apis/user'
+import { setData } from '../redux/reducers/UserdataReducer'
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -28,15 +30,23 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignUp() {
-  const handleSubmit = (event) => {
+const SignUp = (props) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
+    const payload = {
+      name: `${data.get('firstName').trim()} ${data.get('lastName').trim()}`,
       email: data.get('email'),
-      password: data.get('password'),
-    });
+      password: data.get('password')
+    }
+    console.log(payload)
+    const res = await signup(payload)
+    if (res.status === 200) {
+      const { user, accessToken } = res.data.data
+      localStorage.setItem('token', accessToken)
+      props.setUserData(user)
+      // history.push('/')
+    }
   };
 
   return (
@@ -118,7 +128,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
@@ -130,3 +140,15 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+      userData: state.UserDataReducer.userData
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+      setUserData: (data)=> dispatch(setData(data))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)

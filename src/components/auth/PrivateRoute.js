@@ -3,20 +3,29 @@ import {Route, Redirect} from 'react-router-dom'
 const VALID_ID = /^[a-f 0-9]{24}$/i
 const PrivateRoute = ({component: Component, ...rest}) => {
     const [auth, setAuth] = useState(true);
-
+    const checkAuth = () => {
+        try {
+            const token = localStorage.getItem('token')
+            if ( token === null){
+                setAuth(false);
+            } 
+        } catch (error) {
+            setAuth(false)
+        }
+    }
     useEffect(()=> {
-        const token = localStorage.getItem('token')
-        const userId = JSON.parse(localStorage.getItem('user'))._id
-        const isValidId = VALID_ID.test(userId)
-        console.log(userId)
-        if (userId === null || !isValidId || token === null){
-            setAuth(false);
-        } 
+        checkAuth()
     },[window.location])
     return (
-        <Route {...rest}>
-            {!auth ? <Redirect to = "/login"/>: <Component />}
-        </Route>
+        <Route 
+        {...rest}
+        render={() => auth
+            ? <Component />
+            : <Redirect to='/login'/>
+        }
+        />
+            
+        
     )
 }
 

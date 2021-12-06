@@ -27,6 +27,7 @@ import CreateJob from '../../pages/create_job'
 import DrawerItem from './DrawerItem'
 import { stringAvatar } from '../../utils/Avatar.util'
 import { GetAllJobs } from '../../apis/job'
+import { setData, SET_DATA } from '../../redux/reducers/UserdataReducer'
 import './index.css'
 const drawerWidth = 250;
 
@@ -106,8 +107,7 @@ const MiniDrawer = ({ children, ...props }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const name = JSON.parse(localStorage.getItem('user')).name || null
-  const drawerItems = useSelector((state => state.drawerReducer.item))
+  const name = useSelector((state => state.UserDataReducer.userData.name))
   const [jobs, setJobs] = React.useState([])
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -216,7 +216,7 @@ const MiniDrawer = ({ children, ...props }) => {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <Typography variant="h4" align="center">
-            QLiCv
+            My Job
           </Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
