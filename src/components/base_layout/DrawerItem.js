@@ -44,7 +44,7 @@ const DrawerItem = (props) => {
         }
         {
           icon === "none" &&
-          <Avatar  {...stringAvatar(text)} />
+          <Avatar style={{fontSize: 14, width: 25, height: 25 }} {...stringAvatar(text)} />
         }
         {
           icon === "none" &&

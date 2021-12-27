@@ -8,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
-export default function IconLabelButtons({ addColumn }) {
+export default function IconLabelButtons(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [columnTitle, setColumnTitle] = React.useState('')
   const [addStatus, setAddStatus] = React.useState()
@@ -27,10 +27,8 @@ export default function IconLabelButtons({ addColumn }) {
     if (columnTitle === ''){
       return
     }
-    addColumn({
-      id: new Date().getTime(),
-      title: columnTitle,
-      cards: []
+    props.addNewColumn({
+      name: columnTitle
     })
     setColumnTitle('')
     handleClose()

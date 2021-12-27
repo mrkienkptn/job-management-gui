@@ -7,7 +7,9 @@ import {
   CardActions,
   CardContent,
   Card,
-  TextField
+  TextField,
+  Stack,
+  IconButton
 } from '@mui/material'
 import {
   PersonOutline,
@@ -15,7 +17,8 @@ import {
   AccessTime,
   Person,
   Label,
-  Description
+  Description,
+  Add as AddIcon
 } from '@mui/icons-material'
 import {
   DatePicker,
@@ -23,7 +26,10 @@ import {
 } from '@mui/lab'
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import CheckList from './CheckList'
+import Tag from './Tag'
+import SelectTags from './SelectTags'
 import './index.css'
+
 
 const style = {
   position: 'absolute',
@@ -31,17 +37,28 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 900,
-  height: 700
+  height: 700,
+  overflowY: 'scroll'
 };
 
 const CardModal = (props, ref) => {
-
+  const { title, description } = props
   const [open, setOpen] = React.useState(false);
   const [dueDate, setDueDate] = React.useState(null)
   const [openDatePicker, setOpenDatePikcer] = React.useState(false)
+  const selectTagsRef = React.useRef()
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [tags, setTags] = React.useState([{ id: 1, name: 'Copy re' }, { id: 2, name: 'Need Authen' }, { id: 3, name: 'tag3' }])
+  const clickTag = (id) => {
 
+  }
+  const deleteTag = (id) => {
+    // const updateTags = tags.reduce(())
+  }
+  const openSelectTags = (event) => {
+    selectTagsRef.current.openSelectTags(event)
+  }
   React.useImperativeHandle(ref, () => ({
     openModal() {
       handleOpen()
@@ -66,18 +83,44 @@ const CardModal = (props, ref) => {
                   component="div"
                   suppressContentEditableWarning
                   contentEditable={true}>
-                  Title
+                  {title}
                 </Typography>
                 <div style={{ margin: '15px 0px' }}>
                   <span>Project: </span>
                   <span style={{ fontWeight: 'bold' }}>Project Name</span>
                 </div>
+                <div>
+                  <p style={{margin:0}}>Labels</p>
+                  <Stack direction="row" spacing={1} style={{ marginBottom: 15}}>
+                    {
+                      tags && tags.length > 0 && tags.map((tag) => (
+                        <Tag
+                          label={tag.name}
+                          key={tag.id}
+                          clickTag={clickTag}
+                          deleteTag={deleteTag}
+                        />
+                      ))
+                    }
+                    <IconButton 
+                      size='small'
+                      style={{backgroundColor:'#eaecf0'}}
+                      onClick={openSelectTags}
+                    >
+                      <AddIcon fontSize="inherit"/>
+                    </IconButton>
+                  </Stack>
+                  <SelectTags tags={tags}  ref={selectTagsRef}/>
+                </div>
+
+
+
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   suppressContentEditableWarning
                   contentEditable={true}>
-                  Description ...
+                  {description}
                 </Typography>
               </div>
 
@@ -98,13 +141,13 @@ const CardModal = (props, ref) => {
                       disableOpenPicker
                     />
                   </LocalizationProvider>
-                  <CheckList/>
+                  <CheckList />
                 </div>
                 <div className="card-modal-component">
                   <Button startIcon={<PersonOutline />} className="btn">Assignee</Button>
                   <Button startIcon={<Person />} className="btn">Follower</Button>
                   <Button onClick={() => setOpenDatePikcer(true)} startIcon={<AccessTime />} className="btn">Due date</Button>
-                  <Button startIcon={<Label />} className="btn">Labels</Button>
+                  <Button onClick={openSelectTags} startIcon={<Label />} className="btn">Labels</Button>
                   <Button startIcon={<PlaylistAddCheck />} className="btn">Check List</Button>
 
                 </div>

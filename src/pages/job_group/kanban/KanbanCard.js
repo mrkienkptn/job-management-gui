@@ -8,6 +8,7 @@ import CardModal from './CardModal';
 
 const KanbanCard = (props) => {
   const { title, description, dragging } = props
+  
   const {openModal, setOpenModal} = React.useState(false)
   const modalRef = React.useRef()
   const onOpenModal = () => {
@@ -28,7 +29,7 @@ const KanbanCard = (props) => {
           {description}
         </Typography>
       </CardContent>
-      <CardModal ref={modalRef} />
+      <CardModal title={title} description={description} ref={modalRef} />
     </Card>
   );
 }

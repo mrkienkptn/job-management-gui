@@ -29,6 +29,20 @@ export default function CheckList() {
     { name: '5555555555555', value: true },
     { name: '6666666666666666', value: true }
   ])
+  // const pCheckList = () => {
+  //   if (items && items.length > 0) {
+  //     const doneC = items.reduce((z, item)=>{
+  //       if (item.value) {
+  //         z += 1
+  //         return z
+  //       }
+  //     }, 0)
+  //     return doneC / items.length * 100
+  //   } else {
+  //     return 100
+  //   }
+    
+  // }
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const handleClick = (event) => {
@@ -45,21 +59,18 @@ export default function CheckList() {
   const onAddItem = () => {
     if ( newItem === '') return
     setItems([...items, { name: newItem, value: false }])
+    handleClose()
+    setNewItem('')
   }
   const onRemoveItem = index => {
-    let copyItems = items
-    let removed = copyItems.splice(index, 1)
-    console.log(copyItems)
-    setItems(copyItems)
+    const temp = items.slice()
+    setItems([...temp.slice(0, index), ...temp.slice(index+1)])
   }
-  React.useEffect(() => {
-    console.log(items)
-  },[items])
   return (
 
     <Box sx={{ flexGrow: 1 }} className="check-list">
-      <div>Check list 1</div>
-      <LinearProgress color="secondary" variant="determinate" value={50} style={{ height: 5, borderRadius: 4 }} />
+      <div>Check list</div>
+      <LinearProgress color="secondary" variant="determinate" value={20} style={{ height: 5, borderRadius: 4 }} />
       <FormGroup >
         { items && items.length>0 && items.map((i, index) => (
           <div 

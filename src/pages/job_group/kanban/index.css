@@ -23,7 +23,7 @@
 
 .react-kanban-column {
   overflow-y: scroll;
-  max-height: calc(100vh - 184px);
+  max-height: calc(100vh - 140px);
   background-color: #dbdbdb;
 }
 .card-modal-body {
@@ -59,4 +59,21 @@
   text-transform: none;
   background-color: #eaecf0;
   margin-left: 28px;
+}
+.header-btn-more .btn {
+  width: 100%;
+  background-color: #eaecf0;
+  padding-left: 20px;
+  font-size: 12px;
+  justify-content: left !important;
+  text-transform: capitalize !important;
+}
+.header-btn-more .done {
+  color: green !important;
+}
+.header-btn-more .delete {
+  color: red !important;
+}
+.header-btn-more .normal {
+  color: black !important;
 }

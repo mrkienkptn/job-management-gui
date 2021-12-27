@@ -2,6 +2,8 @@ import * as React from 'react'
 import {Doughnut} from 'react-chartjs-2'
 import Box from '@mui/material/Box'
 const DoughnutChart= props => {
+  const { name } = props
+  console.log(props.data)
   const data = {
     labels: ['Todo', 'In progress', 'Done'],
     datasets: [
@@ -25,8 +27,8 @@ const DoughnutChart= props => {
       
   return (
     <Box className="chart-container">
-      <h3>Doughnut Chart</h3>
-      <Doughnut  data={data} />
+      <h3>{name}</h3>
+      <Doughnut  data={props.data} />
     </Box>
   )
 

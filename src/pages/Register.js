@@ -6,11 +6,13 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useHistory } from 'react-router';
 import { connect, useDispatch } from 'react-redux'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signup } from '../apis/user'
@@ -31,6 +33,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 const SignUp = (props) => {
+  const history = useHistory()
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,13 +42,12 @@ const SignUp = (props) => {
       email: data.get('email'),
       password: data.get('password')
     }
-    console.log(payload)
     const res = await signup(payload)
     if (res.status === 200) {
       const { user, accessToken } = res.data.data
       localStorage.setItem('token', accessToken)
-      props.setUserData(user)
-      // history.push('/')
+      localStorage.setItem('user', JSON.stringify(user))
+      history.push('/')
     }
   };
 
@@ -128,9 +130,12 @@ const SignUp = (props) => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/login" variant="body2">
+                <RouterLink to="/login">
+                <Link variant="body2">
                   Already have an account? Sign in
                 </Link>
+                </RouterLink>
+                
               </Grid>
             </Grid>
           </Box>

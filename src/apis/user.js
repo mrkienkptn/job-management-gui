@@ -1,4 +1,4 @@
-import { post } from './rest'
+import { get, post } from './rest'
 
 export const login = (payload) => post(
   '/login',
@@ -7,4 +7,7 @@ export const login = (payload) => post(
 export const signup = (payload) => post(
   '/signup',
   payload
+)
+export const getUsers = email => get(
+  `/users?email=${email}`
 )

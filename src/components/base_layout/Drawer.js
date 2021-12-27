@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { styled, useTheme } from '@mui/material/styles'
 import { Switch, Route } from 'react-router-dom'
-import {Button} from '@mui/material'
+import {Badge, Button} from '@mui/material'
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar from '@mui/material/AppBar'
@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
 import AddIcon from '@mui/icons-material/Add'
@@ -20,14 +21,13 @@ import HomeIcon from '@mui/icons-material/Home'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import Typography from '@mui/material/Typography'
 import { Avatar } from '@mui/material';
-import { useSelector } from 'react-redux'
-import PublicRoute from '../auth/PublicRoute';
 import CreateGroup from '../../pages/create_group'
-import CreateJob from '../../pages/create_job'
+import JobGroup from '../../pages/job_group'
 import DrawerItem from './DrawerItem'
 import { stringAvatar } from '../../utils/Avatar.util'
-import { GetAllJobs } from '../../apis/job'
-import { setData, SET_DATA } from '../../redux/reducers/UserdataReducer'
+import { getGroups } from '../../apis/group'
+import { GroupProvider } from './GroupContext'
+import Notifications from '../../pages/notifications'
 import './index.css'
 const drawerWidth = 250;
 
@@ -49,9 +49,9 @@ const closedMixin = (theme) => ({
   }),
   overflowX: 'hidden',
   backgroundColor: '#e5e5e5',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${theme.spacing(6)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(7)} + 1px)`,
   },
 });
 
@@ -107,8 +107,12 @@ const MiniDrawer = ({ children, ...props }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const name = useSelector((state => state.UserDataReducer.userData.name))
+  const { name } = JSON.parse(localStorage.getItem('user'))
   const [jobs, setJobs] = React.useState([])
+  const notificationsRef = React.useRef()
+  const openNotifications = () => {
+    notificationsRef.current.openModal()
+  }
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -118,15 +122,17 @@ const MiniDrawer = ({ children, ...props }) => {
   };
   const getJobs = async () => {
     try {
-      let jobs = await GetAllJobs()
+      let res = await getGroups()
+      const jobs = res.data.data
       setJobs(jobs)
     } catch (error) {
       console.log(error)
     }
   }
-  React.useEffect(() => {
-    getJobs()
-  }, [])
+  const addJob = (newJob) => {
+    setJobs([newJob, ...jobs])
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -134,7 +140,9 @@ const MiniDrawer = ({ children, ...props }) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  React.useEffect(() => {
+    getJobs()
+  }, [])
   return (
     <Box sx={{ display: 'flex', flexGrow: 1 }} color="secondary.dark">
       <CssBaseline />
@@ -156,26 +164,26 @@ const MiniDrawer = ({ children, ...props }) => {
           <Switch>
 
             {
-              jobs.data && jobs.data.length > 0 && jobs.data.map((item, index) => (
-                <Route key={index + 1} path={`/${item.id}`}>
+              jobs && jobs.length > 0 && jobs.map((item, index) => (
+                <Route key={index + 1} path={`/${item._id}`}>
                   <Typography variant="h6" noWrap component="div">
                     {`${item.name}`}
                   </Typography>
                 </Route>
               ))
             }
-            <Route path="/create-job">
+            <Route path="/create-group">
               <Typography variant="h6" noWrap component="div">
                 Tạo công việc
               </Typography>
             </Route>
 
-            <Route path="/create-group">
+            {/* <Route path="/create-">
               <Typography variant="h6" noWrap component="div">
                 Tạo nhóm chat
               </Typography>
 
-            </Route>
+            </Route> */}
             <Route path="/">
               <Typography variant="h6" noWrap component="div">
                 Trang chủ
@@ -183,6 +191,11 @@ const MiniDrawer = ({ children, ...props }) => {
             </Route>
           </Switch>
           <div style={{ flexGrow: 1, flexDirection: 'row', textAlign: 'end' }}>
+            <IconButton onClick={openNotifications}>
+              <Badge color='error' max={9} badgeContent={4}>
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             <Button
               size="small"
               onClick={handleMenu}
@@ -192,6 +205,7 @@ const MiniDrawer = ({ children, ...props }) => {
               {name}
             </Button>
           </div>
+          <Notifications ref={notificationsRef}/>
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}
@@ -208,7 +222,7 @@ const MiniDrawer = ({ children, ...props }) => {
             onClose={handleClose}
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem onClick={handleClose}>Sign out</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -229,12 +243,12 @@ const MiniDrawer = ({ children, ...props }) => {
             text="Trang chủ"
             link="/"
           />
-          {jobs.data && jobs.data.length > 0 &&
-            jobs.data.map((i, indx) => (
+          {jobs && jobs.length > 0 &&
+            jobs.map((i, indx) => (
               <DrawerItem
                 icon="none"
                 text={i.name}
-                link={`/${i.id}`}
+                link={`/${i._id}`}
                 key={indx + 3}
               />
             ))
@@ -242,24 +256,29 @@ const MiniDrawer = ({ children, ...props }) => {
           <DrawerItem
             icon={<AddIcon />}
             text="Tạo công việc"
-            link="/create-job"
+            link="/create-group"
           />
-          <DrawerItem
+          {/* <DrawerItem
             icon={<AddIcon />}
             text="Tạo nhóm chat"
             link="/create-group"
-          />
+          /> */}
         </List>
       </Drawer>
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* {jobs.data && jobs.data.length > 0 &&
-            jobs.data.map((i, indx) => (
-              <PublicRoute path={`/${i.id}`} component={CreateJob} key={indx} />
+        {jobs && jobs.length > 0 &&
+            jobs.map((i, indx) => (
+              <Route key={indx} path={`/${i._id}`} render={() =>
+                  <GroupProvider value={{groupId: i._id}}>
+                    <JobGroup />
+                  </GroupProvider>
+                }   
+              />
             ))
-          } */}
-        <PublicRoute path="/create-group" component={CreateGroup} />
-        <PublicRoute path="/create-job" component={CreateJob} />
+          }
+        {/* <Route path="/create-group" component={CreateGroup} /> */}
+        <Route path="/create-group" render={()=> <CreateGroup addGroup={addJob}/>} />
         
       </Box>
     </Box>

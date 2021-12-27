@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { Link as RouterLink } from 'react-router-dom'
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -17,7 +18,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useHistory } from 'react-router-dom'
 import { login } from '../apis/user'
 import { setData } from '../redux/reducers/UserdataReducer'
-
+import { useAuth } from '../App'
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -35,6 +36,7 @@ const theme = createTheme();
 
 const SignIn = (props) => {
   const [fail, setFail] = React.useState(false)
+  const auth = useAuth()
   const history = useHistory()
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -48,8 +50,10 @@ const SignIn = (props) => {
       setFail(false)
       const { user, accessToken } = res.data.data
       localStorage.setItem('token', accessToken)
-      props.setUserData(user)
-      history.push('/')
+      localStorage.setItem('user', JSON.stringify(user))
+      auth.setAuth(() => {
+        history.push('/')
+      })
     }
     else  {
       setFail(true)
@@ -115,9 +119,11 @@ const SignIn = (props) => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/register" variant="body2">
+                <RouterLink to="/register">
+                <Link  variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
+                </RouterLink>
               </Grid>
             </Grid>
           </Box>

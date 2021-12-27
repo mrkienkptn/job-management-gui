@@ -1,4 +1,4 @@
-function stringToColor(string) {
+export function stringToColor(string) {
   let hash = 0;
   let i;
 
@@ -19,10 +19,19 @@ function stringToColor(string) {
 }
 
 export function stringAvatar(name) {
+  
+  if (name === ''){
+    return {
+      children: ''
+    }
+  }
+  const splitedName = name.split(' ')
   return {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: splitedName.length > 1 
+      ? `${splitedName[0][0]}${splitedName[1][0]}` 
+      : `${splitedName[0][0]}`
   };
 }

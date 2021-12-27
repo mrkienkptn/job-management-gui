@@ -1,27 +1,17 @@
-import React, {useState, useEffect} from 'react'
-import {Route, Redirect} from 'react-router-dom'
-const VALID_ID = /^[a-f 0-9]{24}$/i
+import React, {useState, useEffect, useMemo} from 'react'
+import { Route, Redirect, useLocation } from 'react-router-dom'
+import { useAuth } from '../../App'
 const PrivateRoute = ({component: Component, ...rest}) => {
-    const [auth, setAuth] = useState(true);
-    const checkAuth = () => {
-        try {
-            const token = localStorage.getItem('token')
-            if ( token === null){
-                setAuth(false);
-            } 
-        } catch (error) {
-            setAuth(false)
-        }
-    }
-    useEffect(()=> {
-        checkAuth()
-    },[window.location])
+    const auth = useAuth()
     return (
         <Route 
         {...rest}
-        render={() => auth
-            ? <Component />
-            : <Redirect to='/login'/>
+        render={(props) => auth.authed
+            ? <Component {...props} />
+            : <Redirect to={{
+                pathname: '/login',
+                state: { from: props.location }
+            }}/>
         }
         />
             

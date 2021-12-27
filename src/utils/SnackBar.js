@@ -1,33 +1,50 @@
 import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const SimpleSnackbar = (props, ref) => {
+  const [open, setOpen] = React.useState(false);
 
-export default function CustomizedSnackbars(props) {
-  const {type, message} = props
-  const [open, setOpen] = React.useState(true);
-
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
+  React.useImperativeHandle(ref, () => ({
+    openSnackBar() {
+      handleOpen()
+    }
+  }))
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
 
   return (
-    
-      <Snackbar open={open} autoHideDuration={3} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={type} sx={{ width: '100%' }}>
-          {message}
-        </Alert>
-      </Snackbar>
-      
+    <div>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message="Note archived"
+        action={action}
+      />
+    </div>
   );
 }
+
+export default React.forwardRef(SimpleSnackbar)

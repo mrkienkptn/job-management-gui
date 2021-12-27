@@ -1,8 +1,8 @@
 import React from 'react'
-import JobGroupTabs from '../job_group'
+import GroupTabs from '../job_group'
 const CreateProject = props => {
   return (
-    <JobGroupTabs/>
+    <GroupTabs/>
   )
 }
 
