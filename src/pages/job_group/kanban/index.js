@@ -30,17 +30,30 @@ const Kanban = (props) => {
   const saveNewColumn = async (newColumn) => {
     try {
       const res = await createProcess(group.groupId, newColumn)
-      return res.data.data
+      if (res.status === 200) {
+        return res.data.data
+      } else {
+        return null
+      }
     } catch (error) {
       return null
     }
   }
   const addNewColumn = async (column) => {
-    const updatedGroup = await saveNewColumn(column)
-    setGroupData(updatedGroup)
+    const rs = await saveNewColumn(column)
+    if (rs !== null) {
+      const { createdProcess, updatedGroup } = rs
+      const newCol = {
+        id: createdProcess._id,
+        title: createdProcess.name,
+        cards: createdProcess.tasks
+      }
+      const updatedBoard = addColumn(board, newCol)
+      setBoard(updatedBoard)
+      setGroupData(updatedGroup)
+    }
   }
   const loadColumn = () => {
-    console.log("load column")
     let columns = groupData.processes
     
     let data = { columns: [] }
@@ -56,10 +69,6 @@ const Kanban = (props) => {
       })
     }
     setBoard(data)
-  }
-
-  const onColumnRename = (x) => {
-    console.log(x)
   }
 
   const onColumnDragEnd = async (column, src, des) => {
@@ -88,12 +97,13 @@ const Kanban = (props) => {
     try {
       const res = await removeProcess(group.groupId, column.id)
       if (res.status === 200) {
-        console.log(res.data)
+        console.log(res.data.data)
+        setGroupData(res.data.data.group)
       } else {
-
+        snackBarRef.current.openSnackBar()
       }
     } catch (error) {
-
+      snackBarRef.current.openSnackBar()
     }
   }
 
@@ -130,11 +140,15 @@ const Kanban = (props) => {
     <Box style={{height:'100%'}}>
       <Board
         children={board}  
-        renderCard={({ title, description }, { removeCard, dragging }) => (
+        renderCard={({ id, title, description }, { removeCard, dragging }) => (
           <KanbanCard
+            key = {id}
+            id = { id }
             dragging={dragging.toString()}
             title={title}
             description={description}
+            groupData={groupData}
+            setGroupData={setGroupData}
           />
         )}
         onCardDragEnd={onCardDragEnd}
@@ -142,7 +156,6 @@ const Kanban = (props) => {
         allowRemoveLane
         allowAddColumn
         allowRenameColumn
-        onColumnRename={onColumnRename}
         renderColumnAdder={(columnBag) =>
           <ColumnAdder 
             addColumn={columnBag}

@@ -10,6 +10,9 @@
     "@mui/icons-material": "^5.0.5",
     "@mui/lab": "^5.0.0-alpha.54",
     "@mui/material": "^5.0.6",
+    "@mui/styles": "^5.2.3",
+    "@mui/x-data-grid": "^5.2.2",
+    "@mui/x-data-grid-generator": "^5.2.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -26,6 +29,7 @@
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.0",
+    "socket.io-client": "^4.4.1",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { SERVER } from '../config/Constance'
+import { getCookie } from '../utils/cookie'
 
 const cancelToken = axios.CancelToken
 const source = cancelToken.source()
@@ -16,7 +17,7 @@ const baseRequest = async (method, path, payload) => {
             cancelToken: source.token,
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${getCookie('token')}`
             }
         })
         return response

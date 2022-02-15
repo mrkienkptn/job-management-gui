@@ -5,9 +5,9 @@ import {
 import { createContext, useContext, useState } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import PublicRoute from './components/auth/PublicRoute';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Drawer from './components/base_layout/Drawer'
+import { ProvideSocket, SocketProvider, socket } from './socket/Context'
 
 const auth = {
   isAuth: false,
@@ -47,7 +47,7 @@ function ProvideAuth({ children }) {
   const auth = useProvideAuth();
   return (
     <authContext.Provider value={auth}>
-      { children }
+      {children}
     </authContext.Provider>
   );
 }
@@ -59,15 +59,17 @@ export function useAuth() {
 
 function App() {
   return (
-    <ProvideAuth>
-      <Router>
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <PrivateRoute path="/" component={Drawer} />
-        </Switch>
-      </Router>
-    </ProvideAuth>
+    <ProvideSocket>
+      <ProvideAuth>
+        <Router>
+          <Switch>
+            <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+            <PrivateRoute path="/" component={Drawer} />
+          </Switch>
+        </Router>
+      </ProvideAuth>
+    </ProvideSocket>
   );
 }
 

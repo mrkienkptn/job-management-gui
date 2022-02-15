@@ -9,6 +9,7 @@ import { useRouteMatch } from 'react-router-dom'
 import Kanban from './kanban';
 import Chat from './chat'
 import Statistics from './statistics';
+import List from './list'
 import Members from './member'
 import { JobGroupProvider } from './Context'
 import GroupContext from '../../components/base_layout/GroupContext'
@@ -52,7 +53,7 @@ export default function JobGroupTabs() {
           </Box>
           <TabPanel value="1"><Chat /></TabPanel>
           <TabPanel value="2"><Kanban /></TabPanel>
-          <TabPanel value="3"></TabPanel>
+          <TabPanel value="3"><List /></TabPanel>
           <TabPanel value="4"><Statistics /></TabPanel>
         </TabContext>
       </Box>

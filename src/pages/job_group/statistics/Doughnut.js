@@ -27,7 +27,7 @@ const DoughnutChart= props => {
       
   return (
     <Box className="chart-container">
-      <h3>{name}</h3>
+      <h3 style={{textAlign: 'center'}}>Task by processes</h3>
       <Doughnut  data={props.data} />
     </Box>
   )

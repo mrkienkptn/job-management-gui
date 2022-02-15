@@ -18,7 +18,9 @@ import FoundUser from './FoundUser'
 import JobGroupContext from '../Context'
 
 import { stringAvatar } from '../../../utils/Avatar.util'
+import { difference } from '../../../utils/array'
 import { getUsers } from '../../../apis/user'
+import { addMember, removeMember } from '../../../apis/group'
 
 const style = {
   position: 'absolute',
@@ -39,10 +41,8 @@ const Members = props => {
   const [email, setEmail] = React.useState('')
   const [foundUser, setFoundUser] = React.useState([])
   const { groupData, setGroupData } = React.useContext(JobGroupContext)
-  const [members, setMembers] = React.useState(groupData.members)
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const ms = ["V Viet", "Ngai Kien", "Dinh Le", "SOn Dam sau"]
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
   const handleChange = async (e) => {
     const { value } = e.target
     setEmail(value)
@@ -60,17 +60,38 @@ const Members = props => {
       try {
         const res = await getUsers(email)
         if (res.status === 200) {
-          setFoundUser(res.data.data)
+          setFoundUser(difference(res.data.data, groupData.members))
         }
       } catch (err) {
-
+        console.log(err)
       }
     }
   }
 
-  React.useEffect(() => {
-    console.log(groupData)
-  }, [])
+  const handleAddMember = async (member) => {
+    try {
+      const res = await addMember(groupData._id, member._id)
+      if (res.status === 200) {
+        setGroupData(res.data.data)
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  const handleRemoveMember = async (member) => {
+    try {
+      if (groupData.admin === member._id) {
+        return 
+      }
+      const res = await removeMember(groupData._id, member._id)
+      if (res.status === 200) {
+        setGroupData(res.data.data)
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Box
@@ -84,9 +105,9 @@ const Members = props => {
             < AddCircleOutlineOutlinedIcon />
           </IconButton>
         </Tooltip>
-        {
-          ms.map((m, index) => (
-            <Avatar style={{ fontSize: 14, width: 25, height: 25 }} {...stringAvatar(m)} key={index} />
+        { groupData.members && groupData.members.length > 0 &&
+          groupData.members.map((m, index) => (
+            <Avatar style={{ fontSize: 14, width: 25, height: 25 }} {...stringAvatar(m.name)} key={index} />
           ))
         }
       </Stack>
@@ -108,23 +129,24 @@ const Members = props => {
                 size='small' 
                 type="email" 
                 id="outlined-basic" 
-                label="Add Member" 
+                label="Find Users" 
                 variant="outlined" 
                 value={email} 
                 onChange={handleChange}
                 onKeyUp={handleKeyUp}
                 />
-              <Button style={{ boxShadow: 'none' }} size="small" variant="contained">Add Member</Button>
+              {/* <Button style={{ boxShadow: 'none' }} size="small" variant="contained">Add Member</Button> */}
             </Stack>
             
             {
               foundUser && foundUser.length > 0 && foundUser.map((m, index) => (
-                <FoundUser data={m.name} key={index} />
+                <FoundUser data={m} key={index} addMember={handleAddMember} />
               ))
             }
             <Divider>Members</Divider>
             {
-              ms.map((m, index) => <Member data={m} key={index} />)
+              groupData.members && groupData.members.length > 0 &&
+              groupData.members.map((m, index) => <Member data={m} key={index} removeMember={handleRemoveMember} adminId={groupData.admin} />)
             }
           </Stack>
         </Box>

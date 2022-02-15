@@ -11,7 +11,10 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { stringAvatar } from '../../../utils/Avatar.util'
 
 const FoundUser = props => {
-  const { data: name } = props
+  const { data: { _id, name, email }, addMember } = props
+  const onAddMember = () => {
+    addMember({ _id, email, name })
+  }
   return (
     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
       <Stack direction="row" spacing={1} alignItems="center">
@@ -21,7 +24,7 @@ const FoundUser = props => {
         </Typography>
       </Stack>
       <Tooltip title={`Add ${name} to group`}>
-        <IconButton style={{ width: 25, height: 25 }} >
+        <IconButton onClick={onAddMember} style={{ width: 25, height: 25 }} >
           <AddCircleOutlineIcon />
         </IconButton>
       </Tooltip>

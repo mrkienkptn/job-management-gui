@@ -1,7 +1,13 @@
 .chart-container{
-  width: 400px;
-  height: 440px;
+  width: 450px;
+  height: 500px;
   background-color: white;
   padding: 15px 30px;
   border-radius: 10px;
+}
+.charts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  
 }

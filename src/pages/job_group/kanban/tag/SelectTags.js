@@ -8,7 +8,7 @@ import {
   TextField
 } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
-import { stringToColor } from '../../../utils/Avatar.util'
+import { stringToColor } from '../../../../utils/Avatar.util'
 
 const SelectTags = (props, ref) => {
   const { tags } = props

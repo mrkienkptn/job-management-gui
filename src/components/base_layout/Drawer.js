@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { styled, useTheme } from '@mui/material/styles'
-import { Switch, Route } from 'react-router-dom'
-import {Badge, Button} from '@mui/material'
+import { Switch, Route, useHistory } from 'react-router-dom'
+import { Badge, Button } from '@mui/material'
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar from '@mui/material/AppBar'
@@ -25,8 +25,10 @@ import CreateGroup from '../../pages/create_group'
 import JobGroup from '../../pages/job_group'
 import DrawerItem from './DrawerItem'
 import { stringAvatar } from '../../utils/Avatar.util'
+import { getCookie } from '../../utils/cookie'
 import { getGroups } from '../../apis/group'
 import { GroupProvider } from './GroupContext'
+import SocketContext from '../../socket/Context'
 import Notifications from '../../pages/notifications'
 import './index.css'
 const drawerWidth = 250;
@@ -107,47 +109,65 @@ const MiniDrawer = ({ children, ...props }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const { name } = JSON.parse(localStorage.getItem('user'))
   const [jobs, setJobs] = React.useState([])
   const notificationsRef = React.useRef()
+  const { socket } = React.useContext(SocketContext)
+  const { name, _id: userId } = JSON.parse(getCookie("user"))
+
+  const history = useHistory()
+  const handleSignout = () => {
+    history.push('/login')
+  }
   const openNotifications = () => {
     notificationsRef.current.openModal()
   }
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const joinGroups = (groups) => {
+    socket.emit('join-groups', groups)
+  }
+
   const getJobs = async () => {
     try {
-      let res = await getGroups()
+      const res = await getGroups()
       const jobs = res.data.data
       setJobs(jobs)
+      const groupIds = jobs.map((j) => j._id)
+      joinGroups({ groupIds })
     } catch (error) {
       console.log(error)
     }
   }
+
   const addJob = (newJob) => {
     setJobs([newJob, ...jobs])
   }
 
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
-  };
+  }
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
+  }
   React.useEffect(() => {
     getJobs()
+    return () => {
+      socket.disconnect();
+    }
   }, [])
+
   return (
     <Box sx={{ display: 'flex', flexGrow: 1 }} color="secondary.dark">
       <CssBaseline />
-
-      <AppBar position="fixed" open={open} style={{backgroundColor: 'white', color:'black', borderBottom:'0.5px solid grey'}}>
+      <AppBar position="fixed" open={open} style={{ backgroundColor: 'white', color: 'black', borderBottom: '0.5px solid grey' }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -162,7 +182,6 @@ const MiniDrawer = ({ children, ...props }) => {
             <MenuIcon />
           </IconButton>
           <Switch>
-
             {
               jobs && jobs.length > 0 && jobs.map((item, index) => (
                 <Route key={index + 1} path={`/${item._id}`}>
@@ -174,19 +193,12 @@ const MiniDrawer = ({ children, ...props }) => {
             }
             <Route path="/create-group">
               <Typography variant="h6" noWrap component="div">
-                Tạo công việc
+                Create Group
               </Typography>
             </Route>
-
-            {/* <Route path="/create-">
-              <Typography variant="h6" noWrap component="div">
-                Tạo nhóm chat
-              </Typography>
-
-            </Route> */}
             <Route path="/">
               <Typography variant="h6" noWrap component="div">
-                Trang chủ
+                Home
               </Typography>
             </Route>
           </Switch>
@@ -200,12 +212,12 @@ const MiniDrawer = ({ children, ...props }) => {
               size="small"
               onClick={handleMenu}
               color="inherit"
-              endIcon={<Avatar {...stringAvatar(name)}/>}
+              endIcon={<Avatar {...stringAvatar(name)} />}
             >
               {name}
             </Button>
           </div>
-          <Notifications ref={notificationsRef}/>
+          <Notifications ref={notificationsRef} />
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}
@@ -222,7 +234,7 @@ const MiniDrawer = ({ children, ...props }) => {
             onClose={handleClose}
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>Sign out</MenuItem>
+            <MenuItem onClick={handleSignout}>Sign out</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -240,7 +252,7 @@ const MiniDrawer = ({ children, ...props }) => {
         <List>
           <DrawerItem
             icon={<HomeIcon />}
-            text="Trang chủ"
+            text="Home"
             link="/"
           />
           {jobs && jobs.length > 0 &&
@@ -255,31 +267,24 @@ const MiniDrawer = ({ children, ...props }) => {
           }
           <DrawerItem
             icon={<AddIcon />}
-            text="Tạo công việc"
+            text="Create Group"
             link="/create-group"
           />
-          {/* <DrawerItem
-            icon={<AddIcon />}
-            text="Tạo nhóm chat"
-            link="/create-group"
-          /> */}
         </List>
       </Drawer>
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {jobs && jobs.length > 0 &&
-            jobs.map((i, indx) => (
-              <Route key={indx} path={`/${i._id}`} render={() =>
-                  <GroupProvider value={{groupId: i._id}}>
-                    <JobGroup />
-                  </GroupProvider>
-                }   
-              />
-            ))
-          }
-        {/* <Route path="/create-group" component={CreateGroup} /> */}
-        <Route path="/create-group" render={()=> <CreateGroup addGroup={addJob}/>} />
-        
+          jobs.map((i, indx) => (
+            <Route key={indx} path={`/${i._id}`} render={() =>
+              <GroupProvider value={{ groupId: i._id, conversation: i.conversation, userId, userName: name }}>
+                <JobGroup />
+              </GroupProvider>
+            }
+            />
+          ))
+        }
+        <Route path="/create-group" render={() => <CreateGroup addGroup={addJob} />} />
       </Box>
     </Box>
   );

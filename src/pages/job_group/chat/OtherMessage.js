@@ -7,6 +7,7 @@ import { stringAvatar } from '../../../utils/Avatar.util';
 import './message.css'
 
 const OtherMessage = (props) => {
+  const { data } = props
   return (
     <Box className="msg-box">
       <Stack 
@@ -15,9 +16,16 @@ const OtherMessage = (props) => {
         justifyContent="flex-start" 
         alignItems="center"
         spacing={1}>
-          <Avatar {...stringAvatar("Ki Tr")} />
-        <div className="other-msg">receive message</div>
-        <div className="date-note" > {new Date().toLocaleString('vi-vn', {year:'numeric', month:'short', day: 'numeric', hour:'numeric', minute:'numeric'})}</div>
+          <Avatar style={{fontSize: 14, width: 24, height: 24}} {...stringAvatar(data.senderId.name)} />
+        <div className="other-msg">{ data.content }</div>
+        {/* <div className="date-note" > {new Date().toLocaleString('vi-vn', {year:'numeric', month:'short', day: 'numeric', hour:'numeric', minute:'numeric'})}</div> */}
+        <div className='date-note' >
+          {
+            new Date().toLocaleDateString() === new Date(data.createdAt).toLocaleDateString()
+            ? new Date(data.createdAt).toLocaleTimeString()
+            : new Date(data.createdAt).toLocaleString()
+          }
+        </div>
       </Stack>
     </Box>
   )

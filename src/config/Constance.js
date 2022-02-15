@@ -1,1 +1,2 @@
-export const SERVER = "http://20.48.3.230:8000"
+export const SERVER = "http://localhost:8000"
+export const SOCKET_SERVER = "http://localhost:8080"

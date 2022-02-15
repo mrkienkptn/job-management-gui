@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom'
 import { login } from '../apis/user'
 import { setData } from '../redux/reducers/UserdataReducer'
 import { useAuth } from '../App'
+import { setCookie } from '../utils/cookie'
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -49,8 +50,8 @@ const SignIn = (props) => {
     if (res.status === 200) {
       setFail(false)
       const { user, accessToken } = res.data.data
-      localStorage.setItem('token', accessToken)
-      localStorage.setItem('user', JSON.stringify(user))
+      setCookie('user', JSON.stringify(user), 5)
+      setCookie('token', accessToken, 30)
       auth.setAuth(() => {
         history.push('/')
       })

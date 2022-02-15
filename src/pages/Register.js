@@ -17,6 +17,7 @@ import { connect, useDispatch } from 'react-redux'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signup } from '../apis/user'
 import { setData } from '../redux/reducers/UserdataReducer'
+import { setCookie } from '../utils/cookie'
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -45,8 +46,8 @@ const SignUp = (props) => {
     const res = await signup(payload)
     if (res.status === 200) {
       const { user, accessToken } = res.data.data
-      localStorage.setItem('token', accessToken)
-      localStorage.setItem('user', JSON.stringify(user))
+      setCookie('user', JSON.stringify(user), 5)
+      setCookie('token', accessToken, 30)
       history.push('/')
     }
   };

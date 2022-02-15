@@ -2,7 +2,7 @@ import  * as React from 'react'
 import {
   Chip
 } from '@mui/material'
-import { stringToColor } from '../../../utils/Avatar.util'
+import { stringToColor } from '../../../../utils/Avatar.util'
 const Tag = props => {
   const { label, deleteTag, clickTag } = props
   const handleClick = () => {
